@@ -36,15 +36,18 @@ fn parse_node(html: &str) -> Nodes {
                 break;
             }
 
-            let (tag_name, tag_text, node) = parse_element(&mut html.to_string());
+            let (tag_name, tag_text, mut node) = parse_element(&mut html.to_string());
             nodes.tag_name = tag_name;
             nodes.text = tag_text;
 
             if node.tag_name != "" {
                 nodes.tree.push(node);
+            }else{
+                node.tree.push(nodes);
+                nodes = node;
             }
 
-        }else {
+        } else {
             break;
         }
     }
@@ -65,7 +68,7 @@ fn parse_element(mut element: &mut String) -> (String, String, Nodes) {
     }
     element.remove(0);
 
-    if element.chars().nth(0).unwrap() != '<'{
+    if element.chars().nth(0).unwrap() != '<' {
         text = parse_text(&mut element);
     }
 
@@ -80,7 +83,24 @@ fn parse_element(mut element: &mut String) -> (String, String, Nodes) {
 
     element.remove(0);
 
-    println!("{}", element);
+    if element.chars().nth(0).unwrap() == '<' {
+        if element.chars().nth(1).unwrap() != '/' {
+            let (a, b, c) = parse_element(element);
+            let mut inner_node = Nodes {
+                tag_name: "".to_string(),
+                text: "".to_string(),
+                tree: Vec::new(),
+            };
+
+            inner_node.tag_name = a;
+            inner_node.text = b;
+            if c.tag_name != "" {
+                inner_node.tree.push(c);
+            }
+
+            nodes.tree.push(inner_node);
+        }
+    }
 
     return (tag_name, text, nodes);
 }
@@ -97,6 +117,5 @@ fn parse_text(text: &mut String) -> String {
         tag_text = format!("{}{}", tag_text, contents);
         text.remove(0);
     }
-
     return tag_text;
 }
