@@ -6,8 +6,8 @@ struct Nodes {
 }
 
 fn main() {
-    let html = "<html><body>hello world<p>aaaaa</p></body></html>".to_string();
-    let node = parse_node(&html);
+    let html = "<html><body>hello world<p>aaaaa</p><p>bbbbbbbb</p></body></html>";
+    let node = parse_node(html);
 
     println!("{:?}", node);
 }
@@ -36,10 +36,14 @@ fn parse_node(html: &str) -> Nodes {
                 break;
             }
 
-            let (tag_name, tag_text, node) = parse_element(&html);
+            let (tag_name, tag_text, node) = parse_element(&mut html.to_string());
             nodes.tag_name = tag_name;
             nodes.text = tag_text;
-            nodes.tree.push(node);
+
+            if node.tag_name != "" {
+                nodes.tree.push(node);
+            }
+
         }else {
             break;
         }
@@ -48,8 +52,7 @@ fn parse_node(html: &str) -> Nodes {
     return nodes;
 }
 
-fn parse_element(element: &str) -> (String, String, Nodes) {
-    let mut element = element.to_string();
+fn parse_element(mut element: &mut String) -> (String, String, Nodes) {
     let mut tag_name = "".to_string();
     let mut text = "".to_string();
     let chars = "abcdefghijklmnopqrstuvwxyz";
@@ -63,26 +66,27 @@ fn parse_element(element: &str) -> (String, String, Nodes) {
     element.remove(0);
 
     if element.chars().nth(0).unwrap() != '<'{
-        text = parse_text(&element);
+        text = parse_text(&mut element);
     }
 
-    let nodes = parse_node(&element);
+    let mut nodes = parse_node(&element);
 
     element.remove(0);
     element.remove(0);
 
-    for index in 1..tag_name.len() {
+    for index in 0..tag_name.len() {
         element.remove(0);
     }
 
     element.remove(0);
 
+    println!("{}", element);
+
     return (tag_name, text, nodes);
 }
 
-fn parse_text(text: &str) -> String {
+fn parse_text(text: &mut String) -> String {
     let mut tag_text = "".to_string();
-    let mut text = text.to_string();
 
     loop {
         if text.chars().nth(0).unwrap() == '<' {
