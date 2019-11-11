@@ -6,7 +6,7 @@ struct Nodes {
 }
 
 fn main() {
-    let html = "<html><body>hello world<p>aaaaa</p><p>bbbbbbbb</p></body></html>";
+    let html = "<html><body>hello world<p>aaaaa<p>dddddd</p></p><p>bbbbbbbb</p><p>cccc</p></body></html>";
     let node = parse_node(html);
 
     println!("{:?}", node);
@@ -42,9 +42,6 @@ fn parse_node(html: &str) -> Nodes {
 
             if node.tag_name != "" {
                 nodes.tree.push(node);
-            }else{
-                node.tree.push(nodes);
-                nodes = node;
             }
 
         } else {
@@ -83,24 +80,26 @@ fn parse_element(mut element: &mut String) -> (String, String, Nodes) {
 
     element.remove(0);
 
-    if element.chars().nth(0).unwrap() == '<' {
-        if element.chars().nth(1).unwrap() != '/' {
-            let (a, b, c) = parse_element(element);
-            let mut inner_node = Nodes {
-                tag_name: "".to_string(),
-                text: "".to_string(),
-                tree: Vec::new(),
-            };
+    if element.chars().nth(0).unwrap() == '<'{
+        if element.chars().nth(1).unwrap() =='/'{
+            element.remove(0);
+            element.remove(0);
 
-            inner_node.tag_name = a;
-            inner_node.text = b;
-            if c.tag_name != "" {
-                inner_node.tree.push(c);
+            for index in 0..tag_name.len() {
+                element.remove(0);
             }
 
-            nodes.tree.push(inner_node);
+            element.remove(0);
+
+            let mut nodes = parse_node(&element);
+            println!("{:?}", nodes);
         }
-    }
+        }else{
+            let mut nodes = parse_node(&element);
+            println!("{:?}", nodes);
+        }
+
+    println!("{}", element);
 
     return (tag_name, text, nodes);
 }
