@@ -6,7 +6,7 @@ struct Nodes {
 }
 
 fn main() {
-    let html = "<html><body>hello world<p>aaaaa<p>dddddd</p></p><p>bbbbbbbb</p><p>cccc</p></body></html>";
+    let html = "<html><body>hello world<p>aaaaa<p>dddddd</p><p>ffff</p></p><p>bbbbbbbb</p><p>cccc</p></body></html>";
     let node = parse_node(html);
 
     println!("{:?}", node);
@@ -93,13 +93,12 @@ fn parse_element(mut element: &mut String) -> (String, String, Nodes) {
 
             let mut nodes = parse_node(&element);
             println!("{:?}", nodes);
-        }
         }else{
             let mut nodes = parse_node(&element);
             println!("{:?}", nodes);
         }
 
-    println!("{}", element);
+    }
 
     return (tag_name, text, nodes);
 }
