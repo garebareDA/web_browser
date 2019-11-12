@@ -6,7 +6,7 @@ struct Nodes {
 }
 
 fn main() {
-    let html = "<html><body>hello world<p>aaaaa<p>dddddd</p><p>ffff</p></p><p>bbbbbbbb</p><p>cccc</p></body></html>";
+    let html = "<html><body>hello world<p>aaaaa<p>dddddd</p><p>ffff<div>eeeeeee</div></p></p><p>bbbbbbbb</p><p>cccc</p></body></html>";
     let node = parse_node(html);
 
     println!("{:?}", node);
@@ -14,7 +14,7 @@ fn main() {
 
 fn parse_node(html: &str) -> Nodes {
     let NodeVec: Vec<Nodes> = Vec::new();
-    let html = html.to_string();
+    let mut html = html.to_string();
 
     let mut nodes: Nodes = Nodes {
         tag_name: "".to_string(),
@@ -22,21 +22,35 @@ fn parse_node(html: &str) -> Nodes {
         tree: NodeVec,
     };
 
-    if html.len() == 0 {
-        return nodes;
-    }
-
     for index in 0..html.len() {
-        if index == html.len() {
-            break;
-        }
 
         if html.chars().nth(index).unwrap() == '<' {
             if html.chars().nth(index + 1).unwrap() == '/' {
+                html.remove(0);
+                html.remove(0);
+
+                loop{
+                    if html.len() == 1 {
+                        return nodes;
+                    }
+
+                    if html.chars().nth(0).unwrap() == '>' && html.chars().nth(2).unwrap() != '/'{
+                        html.remove(0);
+                        break;
+                    }
+                    html.remove(0);
+                }
+
+                if html.chars().nth(0).unwrap() == '<' && html.chars().nth(2).unwrap() != '/'{
+                    let node = parse_node(&mut html);
+                    return node;
+                }
+
                 break;
             }
 
-            let (tag_name, tag_text, mut node) = parse_element(&mut html.to_string());
+            let (tag_name, tag_text, node) = parse_element(&mut html.to_string());
+            println!("{:?}", node);
             nodes.tag_name = tag_name;
             nodes.text = tag_text;
 
@@ -92,14 +106,10 @@ fn parse_element(mut element: &mut String) -> (String, String, Nodes) {
             element.remove(0);
 
             let mut nodes = parse_node(&element);
-            println!("{:?}", nodes);
         }else{
             let mut nodes = parse_node(&element);
-            println!("{:?}", nodes);
         }
-
     }
-
     return (tag_name, text, nodes);
 }
 
