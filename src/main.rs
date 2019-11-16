@@ -22,47 +22,33 @@ fn parse_node(html: &str) -> Nodes {
         tree: NodeVec,
     };
 
-    for index in 0..html.len() {
-
-        if html.chars().nth(index).unwrap() == '<' {
-            if html.chars().nth(index + 1).unwrap() == '/' {
-                html.remove(0);
-                html.remove(0);
-
-                loop{
-                    if html.len() == 1 {
-                        return nodes;
-                    }
-
-                    if html.chars().nth(0).unwrap() == '>' && html.chars().nth(2).unwrap() != '/'{
-                        html.remove(0);
-                        break;
-                    }
+    if html.chars().nth(0).unwrap() == '<' {
+        if html.chars().nth(1).unwrap() == '/' {
+            html.remove(0);
+            html.remove(0);
+            loop {
+                if html.len() == 1 {
+                    return nodes;
+                }
+                if html.chars().nth(0).unwrap() == '>' && html.chars().nth(2).unwrap() != '/' {
                     html.remove(0);
+                    break;
                 }
-
-                if html.chars().nth(0).unwrap() == '<' && html.chars().nth(2).unwrap() != '/'{
-                    let node = parse_node(&mut html);
-                    return node;
-                }
-
-                break;
+                html.remove(0);
             }
 
-            let (tag_name, tag_text, node) = parse_element(&mut html.to_string());
-            println!("{:?}", node);
-            nodes.tag_name = tag_name;
-            nodes.text = tag_text;
-
-            if node.tag_name != "" {
-                nodes.tree.push(node);
+            if html.chars().nth(0).unwrap() == '<' && html.chars().nth(2).unwrap() != '/' {
+                let node = parse_node(&mut html);
+                return node;
             }
-
-        } else {
-            break;
+        }
+        let (tag_name, tag_text, node) = parse_element(&mut html.to_string());
+        nodes.tag_name = tag_name;
+        nodes.text = tag_text;
+        if node.tag_name != "" {
+            nodes.tree.push(node);
         }
     }
-
     return nodes;
 }
 
@@ -94,8 +80,8 @@ fn parse_element(mut element: &mut String) -> (String, String, Nodes) {
 
     element.remove(0);
 
-    if element.chars().nth(0).unwrap() == '<'{
-        if element.chars().nth(1).unwrap() =='/'{
+    if element.chars().nth(0).unwrap() == '<' {
+        if element.chars().nth(1).unwrap() == '/' {
             element.remove(0);
             element.remove(0);
 
@@ -106,10 +92,11 @@ fn parse_element(mut element: &mut String) -> (String, String, Nodes) {
             element.remove(0);
 
             let mut nodes = parse_node(&element);
-        }else{
+        } else {
             let mut nodes = parse_node(&element);
         }
     }
+
     return (tag_name, text, nodes);
 }
 
