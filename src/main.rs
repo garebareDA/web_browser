@@ -11,7 +11,7 @@ struct Html {
 }
 
 fn main() {
-    let html = "<html><body>hello world<p>aaaaa<p>dddddd</p><p>ffff<div>eeeeeee</div></p></p><p>bbbbbbbb</p><p>cccc</p></body></html>".to_string();
+    let html = "<html><body>hello world<p>aaaaa<p>dddddd</p><p>ffff<div>eeeeeee</div></p></p><p>bbbbbbbb<p>hhhhhh</p></p><p>cccc<p>ggggggg</p></p></body></html>".to_string();
     let mut html = Html{
         html:html,
         tag:Vec::new(),
@@ -52,7 +52,7 @@ fn parse_node(mut html: &mut Html) -> Nodes {
             nodes.child.push(node);
         }
 
-        if nodes.child.is_empty() == false && nodes.child[0].tag_name == html.tag[html.tag.len() - 1] {
+        if !nodes.child.is_empty() && html.tag.len() > 0 && nodes.child[0].tag_name == html.tag[html.tag.len() - 1] {
             let node = parse_node(&mut html);
             if node.tag_name != "" {
                 nodes.child.push(node);
