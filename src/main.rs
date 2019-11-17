@@ -2,13 +2,12 @@
 struct Nodes {
     tag_name: String,
     text: String,
-    tree: Vec<Nodes>,
+    child: Vec<Nodes>,
 }
 
 struct Html {
     html: String,
     tag: Vec<String>,
-    innner: String,
 }
 
 fn main() {
@@ -16,7 +15,6 @@ fn main() {
     let mut html = Html{
         html:html,
         tag:Vec::new(),
-        innner:"".to_string(),
     };
 
     let node = parse_node(&mut html);
@@ -29,22 +27,19 @@ fn parse_node(mut html: &mut Html) -> Nodes {
     let mut nodes: Nodes = Nodes {
         tag_name: "".to_string(),
         text: "".to_string(),
-        tree: Vec::new(),
+        child: Vec::new(),
     };
 
     if html.html.chars().nth(0).unwrap() == '<' {
         if html.html.chars().nth(1).unwrap() == '/' {
-            html.html.remove(0);
-            html.html.remove(0);
 
             loop {
-                if html.html.chars().nth(0).unwrap() == '<' {
+                remove_close_tag(&mut html);
+                if html.html.len() == 0 || html.html.chars().nth(1).unwrap() != '/' {
                     break;
                 }
-                html.html.remove(0);
             }
 
-            html.tag.remove(html.tag.len() - 1);
             return nodes;
         }
 
@@ -53,11 +48,29 @@ fn parse_node(mut html: &mut Html) -> Nodes {
         nodes.tag_name = tag_name;
         nodes.text = tag_text;
 
-        println!("{}", nodes.tag_name);
-        println!("{:?}", html.tag);
-
         if node.tag_name != "" {
-            nodes.tree.push(node);
+            nodes.child.push(node);
+        }
+
+        if nodes.child.is_empty() == false && nodes.child[0].tag_name == html.tag[html.tag.len() - 1] {
+            let node = parse_node(&mut html);
+            if node.tag_name != "" {
+                nodes.child.push(node);
+            }
+
+        }
+
+        loop{
+            if html.html.len() == 0 {
+                break;
+            }
+
+            if nodes.tag_name == "html" {
+                let node = parse_node(&mut html);
+                nodes.child.push(node);
+            }else{
+                break;
+            }
         }
     }
 
@@ -82,7 +95,7 @@ fn parse_element(mut html: &mut Html) -> (String, String, Nodes) {
     }
 
     html.tag.push(tag_name.clone());
-    let mut nodes = parse_node(&mut html);
+    let nodes = parse_node(&mut html);
 
     return (tag_name, text, nodes);
 }
@@ -101,4 +114,18 @@ fn parse_text(html: &mut Html) -> String {
     }
 
     return tag_text;
+}
+
+fn remove_close_tag( html: &mut Html) {
+    html.html.remove(0);
+    html.html.remove(0);
+
+    loop {
+        if html.html.len() == 0 || html.html.chars().nth(0).unwrap() == '<' {
+            break;
+        }
+        html.html.remove(0);
+    }
+
+    html.tag.remove(html.tag.len() - 1);
 }
