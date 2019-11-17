@@ -34,6 +34,17 @@ fn parse_node(mut html: &mut Html) -> Nodes {
 
     if html.html.chars().nth(0).unwrap() == '<' {
         if html.html.chars().nth(1).unwrap() == '/' {
+            html.html.remove(0);
+            html.html.remove(0);
+
+            loop {
+                if html.html.chars().nth(0).unwrap() == '<' {
+                    break;
+                }
+                html.html.remove(0);
+            }
+
+            html.tag.remove(html.tag.len() - 1);
             return nodes;
         }
 
@@ -41,6 +52,9 @@ fn parse_node(mut html: &mut Html) -> Nodes {
 
         nodes.tag_name = tag_name;
         nodes.text = tag_text;
+
+        println!("{}", nodes.tag_name);
+        println!("{:?}", html.tag);
 
         if node.tag_name != "" {
             nodes.tree.push(node);
@@ -50,41 +64,40 @@ fn parse_node(mut html: &mut Html) -> Nodes {
     return nodes;
 }
 
-fn parse_element(mut element: &mut Html) -> (String, String, Nodes) {
+fn parse_element(mut html: &mut Html) -> (String, String, Nodes) {
     let mut tag_name = "".to_string();
     let mut text = "".to_string();
     let chars = "abcdefghijklmnopqrstuvwxyz";
-    element.html.remove(0);
+    html.html.remove(0);
 
-    while chars.contains(element.html.chars().nth(0).unwrap()) {
-        let contents = element.html.chars().nth(0).unwrap();
+    while chars.contains(html.html.chars().nth(0).unwrap()) {
+        let contents = html.html.chars().nth(0).unwrap();
         tag_name = format!("{}{}", tag_name, contents);
-        element.html.remove(0);
+        html.html.remove(0);
     }
-    element.html.remove(0);
+    html.html.remove(0);
 
-    if element.html.chars().nth(0).unwrap() != '<' {
-        text = parse_text(&mut element);
+    if html.html.chars().nth(0).unwrap() != '<' {
+        text = parse_text(&mut html);
     }
 
-    let mut nodes = parse_node(&mut element);
-
-    println!("{}", element.html);
+    html.tag.push(tag_name.clone());
+    let mut nodes = parse_node(&mut html);
 
     return (tag_name, text, nodes);
 }
 
-fn parse_text(text: &mut Html) -> String {
+fn parse_text(html: &mut Html) -> String {
     let mut tag_text = "".to_string();
 
     loop {
-        if text.html.chars().nth(0).unwrap() == '<' {
+        if html.html.chars().nth(0).unwrap() == '<' {
             break;
         }
 
-        let contents = text.html.chars().nth(0).unwrap();
+        let contents = html.html.chars().nth(0).unwrap();
         tag_text = format!("{}{}", tag_text, contents);
-        text.html.remove(0);
+        html.html.remove(0);
     }
 
     return tag_text;
