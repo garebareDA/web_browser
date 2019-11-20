@@ -137,12 +137,12 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
     let mut attr_vec: Vec<Attribute> = Vec::new();
 
     loop {
-        let mut attr = Attribute{
+        let mut attr = Attribute {
             name: "".to_string(),
             contents: "".to_string(),
         };
 
-        if html.html.len() < 0 {
+        if html.html.len() < 1 {
             break;
         }
 
@@ -154,7 +154,7 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
             html.html.remove(0);
         }
 
-        if html.html.chars().nth(0).unwrap() != '='{
+        if html.html.chars().nth(0).unwrap() != '=' {
             let mut name = "".to_string();
 
             loop {
