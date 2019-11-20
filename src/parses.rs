@@ -103,7 +103,10 @@ fn parse_element(mut html: &mut Html) -> (String, String, Nodes, Vec<Attribute>)
         text = parse_text(&mut html);
     }
 
-    html.tag.push(tag_name.clone());
+    if tag_judgment(&tag_name) {
+        html.tag.push(tag_name.clone());
+    }
+
     let nodes = parse_node(&mut html);
 
     return (tag_name, text, nodes, attrs);
@@ -198,4 +201,25 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
     }
 
     return attr_vec;
+}
+
+fn tag_judgment(tag: &str) -> bool {
+    match tag{
+        "!DOCTYPE" => false,
+        "area" => false,
+        "base" => false,
+        "br" => false,
+        "col" => false,
+        "embed" => false,
+        "hr" => false,
+        "img" => false,
+        "input" => false,
+        "link" => false,
+        "meta" => false,
+        "param" => false,
+        "source" => false,
+        "track" => false,
+        "wbr" => false,
+        _ => true,
+    }
 }
