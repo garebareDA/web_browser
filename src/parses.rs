@@ -84,6 +84,12 @@ pub fn parse_node(mut html: &mut Html) -> Nodes {
 fn parse_element(mut html: &mut Html) -> (String, String, Nodes, Vec<Attribute>) {
     let mut tag_name = "".to_string();
     let mut text = "".to_string();
+    let mut nodes: Nodes = Nodes {
+        tag_name: "".to_string(),
+        text: "".to_string(),
+        attributes: Vec::new(),
+        child: Vec::new(),
+    };
     html.html.remove(0);
 
     loop {
@@ -105,9 +111,8 @@ fn parse_element(mut html: &mut Html) -> (String, String, Nodes, Vec<Attribute>)
 
     if tag_judgment(&tag_name) {
         html.tag.push(tag_name.clone());
+        nodes = parse_node(&mut html);
     }
-
-    let nodes = parse_node(&mut html);
 
     return (tag_name, text, nodes, attrs);
 }
@@ -205,7 +210,6 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
 
 fn tag_judgment(tag: &str) -> bool {
     match tag{
-        "!DOCTYPE" => false,
         "area" => false,
         "base" => false,
         "br" => false,
