@@ -25,6 +25,10 @@ pub fn parse_node(mut html: &mut Html) -> Nodes {
         child: Vec::new(),
     };
 
+    if html.html.len() < 1 {
+        return nodes;
+    }
+
     if html.html.chars().nth(0).unwrap() == '<' {
         if html.html.chars().nth(1).unwrap() == '/' {
             loop {
@@ -80,11 +84,13 @@ pub fn parse_node(mut html: &mut Html) -> Nodes {
 fn parse_element(mut html: &mut Html) -> (String, String, Nodes, Vec<Attribute>) {
     let mut tag_name = "".to_string();
     let mut text = "".to_string();
-    let chars = "abcdefghijklmnopqrstuvwxyz";
     html.html.remove(0);
 
-    while chars.contains(html.html.chars().nth(0).unwrap()) {
+    loop {
         let contents = html.html.chars().nth(0).unwrap();
+        if contents == ' ' || contents == '>' {
+            break;
+        }
         tag_name = format!("{}{}", tag_name, contents);
         html.html.remove(0);
     }
