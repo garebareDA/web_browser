@@ -1,7 +1,7 @@
 use web_browser::parses;
 
 fn main() {
-    let html = "<html><body>hello world<p name='tekitou'>aaaaa<p>dddddd</p><p>ffff<div>eeeeeee</div></p></p><p>bbbbbbbb<p>hhhhhh</p></p><p>cccc<p>ggggggg</p></p></body></html>".to_string();
+    let html = "<html><body>hello world<p aaaa=\"bbbbb\" ccccc=\"ddddd\">aaaaa<p aaaa=\"bbbbbb\">dddddd</p><p>ffff<div>eeeeeee</div></p></p><p>bbbbbbbb<p>hhhhhh</p></p><p>cccc<p>ggggggg</p></p></body></html>".to_string();
     let mut html =parses::Html{
         html:html,
         tag:Vec::new(),

@@ -37,10 +37,14 @@ pub fn parse_node(mut html: &mut Html) -> Nodes {
             return nodes;
         }
 
-        let (tag_name, tag_text, node) = parse_element(&mut html);
+        let (tag_name, tag_text, node, attr) = parse_element(&mut html);
 
         nodes.tag_name = tag_name;
         nodes.text = tag_text;
+
+        if !attr.is_empty() {
+            nodes.attributes = attr;
+        }
 
         if node.tag_name != "" {
             nodes.child.push(node);
@@ -73,7 +77,7 @@ pub fn parse_node(mut html: &mut Html) -> Nodes {
     return nodes;
 }
 
-fn parse_element(mut html: &mut Html) -> (String, String, Nodes) {
+fn parse_element(mut html: &mut Html) -> (String, String, Nodes, Vec<Attribute>) {
     let mut tag_name = "".to_string();
     let mut text = "".to_string();
     let chars = "abcdefghijklmnopqrstuvwxyz";
@@ -85,7 +89,7 @@ fn parse_element(mut html: &mut Html) -> (String, String, Nodes) {
         html.html.remove(0);
     }
 
-    let attr = parse_attribute(&mut html);
+    let attrs = parse_attribute(&mut html);
 
     html.html.remove(0);
 
@@ -96,7 +100,7 @@ fn parse_element(mut html: &mut Html) -> (String, String, Nodes) {
     html.tag.push(tag_name.clone());
     let nodes = parse_node(&mut html);
 
-    return (tag_name, text, nodes);
+    return (tag_name, text, nodes, attrs);
 }
 
 fn parse_text(html: &mut Html) -> String {
@@ -137,8 +141,6 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
             name: "".to_string(),
             contents: "".to_string(),
         };
-
-        println!("{}", html.html.len());
 
         if html.html.len() < 0 {
             break;
