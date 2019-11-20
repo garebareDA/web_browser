@@ -1,29 +1,8 @@
-#[derive(Debug)]
-struct Attribute {
-    name: String,
-    contents: String,
-}
-
-#[derive(Debug)]
-pub struct Nodes {
-    tag_name: String,
-    text: String,
-    attributes: Vec<Attribute>,
-    child: Vec<Nodes>,
-}
-
-pub struct Html {
-    pub html: String,
-    pub tag: Vec<String>,
-}
+use super::structs::{Nodes, Html, Attribute};
+use super::tags::{tag_judgment, remove_close_tag};
 
 pub fn parse_node(mut html: &mut Html) -> Nodes {
-    let mut nodes: Nodes = Nodes {
-        tag_name: "".to_string(),
-        text: "".to_string(),
-        attributes: Vec::new(),
-        child: Vec::new(),
-    };
+    let mut nodes: Nodes = Nodes::new();
 
     if html.html.len() < 1 {
         return nodes;
@@ -133,28 +112,11 @@ fn parse_text(html: &mut Html) -> String {
     return tag_text;
 }
 
-fn remove_close_tag(html: &mut Html) {
-    html.html.remove(0);
-    html.html.remove(0);
-
-    loop {
-        if html.html.len() == 0 || html.html.chars().nth(0).unwrap() == '<' {
-            break;
-        }
-        html.html.remove(0);
-    }
-
-    html.tag.remove(html.tag.len() - 1);
-}
-
 fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
     let mut attr_vec: Vec<Attribute> = Vec::new();
 
     loop {
-        let mut attr = Attribute {
-            name: "".to_string(),
-            contents: "".to_string(),
-        };
+        let mut attr = Attribute::new();
 
         if html.html.len() < 1 {
             break;
@@ -206,24 +168,4 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
     }
 
     return attr_vec;
-}
-
-fn tag_judgment(tag: &str) -> bool {
-    match tag{
-        "area" => false,
-        "base" => false,
-        "br" => false,
-        "col" => false,
-        "embed" => false,
-        "hr" => false,
-        "img" => false,
-        "input" => false,
-        "link" => false,
-        "meta" => false,
-        "param" => false,
-        "source" => false,
-        "track" => false,
-        "wbr" => false,
-        _ => true,
-    }
 }
