@@ -12,24 +12,21 @@ pub struct Nodes {
     child: Vec<Nodes>,
 }
 
-
 pub struct Html {
     pub html: String,
     pub tag: Vec<String>,
 }
 
 pub fn parse_node(mut html: &mut Html) -> Nodes {
-
     let mut nodes: Nodes = Nodes {
         tag_name: "".to_string(),
         text: "".to_string(),
-        attributes:Vec::new(),
+        attributes: Vec::new(),
         child: Vec::new(),
     };
 
     if html.html.chars().nth(0).unwrap() == '<' {
         if html.html.chars().nth(1).unwrap() == '/' {
-
             loop {
                 remove_close_tag(&mut html);
                 if html.html.len() == 0 || html.html.chars().nth(1).unwrap() != '/' {
@@ -49,15 +46,17 @@ pub fn parse_node(mut html: &mut Html) -> Nodes {
             nodes.child.push(node);
         }
 
-        if !nodes.child.is_empty() && html.tag.len() > 0 && nodes.child[0].tag_name == html.tag[html.tag.len() - 1] {
+        if !nodes.child.is_empty()
+            && html.tag.len() > 0
+            && nodes.child[0].tag_name == html.tag[html.tag.len() - 1]
+        {
             let node = parse_node(&mut html);
             if node.tag_name != "" {
                 nodes.child.push(node);
             }
-
         }
 
-        loop{
+        loop {
             if html.html.len() == 0 {
                 break;
             }
@@ -65,7 +64,7 @@ pub fn parse_node(mut html: &mut Html) -> Nodes {
             if nodes.tag_name == "html" {
                 let node = parse_node(&mut html);
                 nodes.child.push(node);
-            }else{
+            } else {
                 break;
             }
         }
@@ -85,6 +84,9 @@ fn parse_element(mut html: &mut Html) -> (String, String, Nodes) {
         tag_name = format!("{}{}", tag_name, contents);
         html.html.remove(0);
     }
+
+    let attr = parse_attribute(&mut html);
+
     html.html.remove(0);
 
     if html.html.chars().nth(0).unwrap() != '<' {
@@ -113,7 +115,7 @@ fn parse_text(html: &mut Html) -> String {
     return tag_text;
 }
 
-fn remove_close_tag( html: &mut Html) {
+fn remove_close_tag(html: &mut Html) {
     html.html.remove(0);
     html.html.remove(0);
 
@@ -125,4 +127,67 @@ fn remove_close_tag( html: &mut Html) {
     }
 
     html.tag.remove(html.tag.len() - 1);
+}
+
+fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
+    let mut attr_vec: Vec<Attribute> = Vec::new();
+
+    loop {
+        let mut attr = Attribute{
+            name: "".to_string(),
+            contents: "".to_string(),
+        };
+
+        println!("{}", html.html.len());
+
+        if html.html.len() < 0 {
+            break;
+        }
+
+        if html.html.chars().nth(0).unwrap() == '>' {
+            break;
+        }
+
+        if html.html.chars().nth(0).unwrap() == ' ' {
+            html.html.remove(0);
+        }
+
+        if html.html.chars().nth(0).unwrap() != '='{
+            let mut name = "".to_string();
+
+            loop {
+                let next_char = html.html.chars().nth(0).unwrap();
+                if next_char == '>' || next_char == '=' {
+                    break;
+                }
+
+                name = format!("{}{}", name, next_char);
+                html.html.remove(0);
+            }
+
+            attr.name = name;
+        }
+
+        if html.html.chars().nth(0).unwrap() == '=' {
+            let mut contents = "".to_string();
+            html.html.remove(0);
+
+            loop {
+                let next_char = html.html.chars().nth(0).unwrap();
+                if next_char == ' ' || next_char == '>' {
+                    break;
+                }
+
+                contents = format!("{}{}", contents, next_char);
+                html.html.remove(0);
+            }
+
+            attr.contents = contents;
+        }
+
+        println!("{:?}", attr);
+        attr_vec.push(attr);
+    }
+
+    return attr_vec;
 }
