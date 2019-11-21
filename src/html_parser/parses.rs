@@ -138,6 +138,10 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
                 html.html.remove(0);
             }
 
+            if name == "style" {
+                attr.style = perse_style(html);
+            }
+
             attr.name = name;
         }
 
@@ -157,10 +161,6 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
 
                 contents = format!("{}{}", contents, next_char);
                 html.html.remove(0);
-            }
-
-            if contents == "style" {
-                let style = perse_style(html);
             }
 
             attr.contents = contents;
@@ -201,17 +201,19 @@ fn perse_style(html: &mut Html) -> Vec<Style> {
         if html.html.chars().nth(0).unwrap() == ':' {
             html.html.remove(0);
             loop {
-                if html.html.chars().nth(0).unwrap() == ';' {
+                let chars = html.html.chars().nth(0).unwrap();
+                if chars == ';' {
                     html.html.remove(0);
                     break;
+                } else if chars == '>' {
+                    break;
                 }
-
-                let chars = html.html.chars().nth(0).unwrap();
                 contents = format!("{}{}", contents, chars);
                 html.html.remove(0);
             }
         }
 
+        contents.pop();
         style.name = name;
         style.contents = contents;
         style_vec.push(style);
