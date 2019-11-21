@@ -7,7 +7,7 @@ pub struct Attribute {
 
 impl Attribute {
     pub fn new() -> Attribute {
-        return Attribute { name:"".to_string(), contents:"".to_string(), style: Vec::new()};
+        return Attribute { name:String::new(), contents:String::new(), style: Vec::new()};
     }
 }
 
@@ -19,7 +19,7 @@ pub struct Style {
 
 impl Style {
     pub fn new() -> Style {
-        return Style { name:"".to_string(), contents:"".to_string()};
+        return Style { name:String::new(), contents:String::new()};
     }
 }
 
@@ -39,8 +39,8 @@ pub struct Nodes {
 impl Nodes {
     pub fn new() -> Nodes {
         return Nodes {
-            tag_name: "".to_string(),
-            text: "".to_string(),
+            tag_name: String::new(),
+            text: String::new(),
             attributes: Vec::new(),
             child: Vec::new(),
         };

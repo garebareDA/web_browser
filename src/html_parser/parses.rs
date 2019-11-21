@@ -61,14 +61,9 @@ pub fn parse_node(mut html: &mut Html) -> Nodes {
 }
 
 fn parse_element(mut html: &mut Html) -> (String, String, Nodes, Vec<Attribute>) {
-    let mut tag_name = "".to_string();
-    let mut text = "".to_string();
-    let mut nodes: Nodes = Nodes {
-        tag_name: "".to_string(),
-        text: "".to_string(),
-        attributes: Vec::new(),
-        child: Vec::new(),
-    };
+    let mut tag_name = String::new();
+    let mut text = String::new();
+    let mut nodes = Nodes::new();
     html.html.remove(0);
 
     loop {
@@ -97,7 +92,7 @@ fn parse_element(mut html: &mut Html) -> (String, String, Nodes, Vec<Attribute>)
 }
 
 fn parse_text(html: &mut Html) -> String {
-    let mut tag_text = "".to_string();
+    let mut tag_text = String::new();
 
     loop {
         if html.html.chars().nth(0).unwrap() == '<' {
@@ -131,7 +126,7 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
         }
 
         if html.html.chars().nth(0).unwrap() != '=' {
-            let mut name = "".to_string();
+            let mut name = String::new();
 
             loop {
                 let next_char = html.html.chars().nth(0).unwrap();
@@ -147,7 +142,7 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
         }
 
         if html.html.chars().nth(0).unwrap() == '=' {
-            let mut contents = "".to_string();
+            let mut contents = String::new();
             html.html.remove(0);
             html.html.remove(0);
 
@@ -164,6 +159,10 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
                 html.html.remove(0);
             }
 
+            if contents == "style" {
+                let style = perse_style(html);
+            }
+
             attr.contents = contents;
         }
 
@@ -172,4 +171,51 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
     }
 
     return attr_vec;
+}
+
+fn perse_style(html: &mut Html) -> Vec<Style> {
+    let mut style_vec: Vec<Style> = Vec::new();
+
+    if html.html.chars().nth(0).unwrap() == '=' {
+        html.html.remove(0);
+    } else {
+        return style_vec;
+    }
+    html.html.remove(0);
+
+    loop {
+        let mut style = Style::new();
+        let mut name = String::new();
+        let mut contents = String::new();
+
+        if html.html.chars().nth(0).unwrap() == '>' {
+            break;
+        }
+
+        while html.html.chars().nth(0).unwrap() != ':' {
+            let contents = html.html.chars().nth(0).unwrap();
+            name = format!("{}{}", name, contents);
+            html.html.remove(0);
+        }
+
+        if html.html.chars().nth(0).unwrap() == ':' {
+            html.html.remove(0);
+            loop {
+                if html.html.chars().nth(0).unwrap() == ';' {
+                    html.html.remove(0);
+                    break;
+                }
+
+                let chars = html.html.chars().nth(0).unwrap();
+                contents = format!("{}{}", contents, chars);
+                html.html.remove(0);
+            }
+        }
+
+        style.name = name;
+        style.contents = contents;
+        style_vec.push(style);
+    }
+
+    return style_vec;
 }
