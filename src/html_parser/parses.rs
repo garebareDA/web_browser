@@ -1,5 +1,5 @@
-use super::structs::{Nodes, Html, Attribute};
-use super::tags::{tag_judgment, remove_close_tag};
+use super::structs::{Attribute, Html, Nodes, Style};
+use super::tags::{remove_close_tag, tag_judgment};
 
 pub fn parse_node(mut html: &mut Html) -> Nodes {
     let mut nodes: Nodes = Nodes::new();
@@ -149,10 +149,14 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
         if html.html.chars().nth(0).unwrap() == '=' {
             let mut contents = "".to_string();
             html.html.remove(0);
+            html.html.remove(0);
 
             loop {
                 let next_char = html.html.chars().nth(0).unwrap();
                 if next_char == ' ' || next_char == '>' {
+                    break;
+                } else if next_char == '"' {
+                    html.html.remove(0);
                     break;
                 }
 

@@ -2,11 +2,24 @@
 pub struct Attribute {
     pub name: String,
     pub contents: String,
+    pub style: Vec<Style>,
 }
 
 impl Attribute {
     pub fn new() -> Attribute {
-        return Attribute { name:"".to_string(), contents:"".to_string() };
+        return Attribute { name:"".to_string(), contents:"".to_string(), style: Vec::new()};
+    }
+}
+
+#[derive(Debug)]
+pub struct Style {
+    pub name: String,
+    pub contents: String,
+}
+
+impl Style {
+    pub fn new() -> Style {
+        return Style { name:"".to_string(), contents:"".to_string()};
     }
 }
 
