@@ -22,8 +22,8 @@ pub fn parse_node(mut html: &mut Html) -> Nodes {
 
         let (tag_name, tag_text, node, attr) = parse_element(&mut html);
 
-        nodes.tag_name = tag_name;
-        nodes.text = tag_text;
+        nodes.tag_name = tag_name.trim().to_string();
+        nodes.text = tag_text.trim().to_string();
 
         if !attr.is_empty() {
             nodes.attributes = attr;
@@ -142,7 +142,7 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
                 attr.style = perse_style(html);
             }
 
-            attr.name = name;
+            attr.name = name.trim().to_string();
         }
 
         if html.html.chars().nth(0).unwrap() == '=' {
@@ -163,7 +163,7 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
                 html.html.remove(0);
             }
 
-            attr.contents = contents;
+            attr.contents = contents.trim().to_string();
         }
 
         println!("{:?}", attr);
@@ -214,8 +214,8 @@ fn perse_style(html: &mut Html) -> Vec<Style> {
         }
 
         contents.pop();
-        style.name = name;
-        style.contents = contents;
+        style.name = name.trim().to_string();
+        style.contents = contents.trim().to_string();
         style_vec.push(style);
     }
 
