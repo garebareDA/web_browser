@@ -1,5 +1,6 @@
 use web_browser::html_parser::structs::Html;
 use web_browser::html_parser::parses::parse_node;
+use web_browser::gtk::window::window;
 use std::fs;
 
 fn main() {
@@ -13,4 +14,6 @@ fn main() {
     let node = parse_node(&mut html);
 
     println!("{:?}", node);
+
+    window();
 }
