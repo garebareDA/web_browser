@@ -12,7 +12,7 @@ fn main() {
     };
 
     let node = parse_node(&mut html);
-
+    window();
     println!("{:?}", node);
 
     window();
