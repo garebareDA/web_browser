@@ -1,17 +1,41 @@
+extern crate gtk;
+extern crate gio;
+
 use web_browser::html_parser::structs::Html;
 use web_browser::html_parser::parses::parse_node;
-use web_browser::gtk::window::window;
+use web_browser::gtk::add_box;
 use std::fs;
 
-fn main() {
-    let html = "<html><body>hello world<p aaaa=\"bbbbb\" ccccc=\"ddddd\">aaaaa<p aaaa=\"bbbbbb\">dddddd</p><p>ffff<div>eeeeeee</div></p></p><p>bbbbbbbb<p>hhhhhh</p></p><p>cccc<p>ggggggg</p></p></body></html>".to_string();
-    let html = fs::read_to_string("./html/test.html").unwrap().replace("\r\n", "").to_string();
-    let mut html = Html{
-        html:html,
-        tag:Vec::new(),
-    };
+use gtk::prelude::*;
+use gio::prelude::*;
 
-    let node = parse_node(&mut html);
-    window();
-    println!("{:?}", node);
+use std::env;
+
+fn main() {
+    let uiapp = gtk::Application::new(Some("org.gtkrsnotes.demo"),
+                                      gio::ApplicationFlags::FLAGS_NONE)
+                                 .expect("Application::new failed");
+    uiapp.connect_activate(|app| {
+
+        let win = gtk::ApplicationWindow::new(app);
+
+        win.set_default_size(800, 600);
+        win.set_title("web blowser");
+
+        let mut scr_view = gtk::ScrolledWindow::new(gtk::NONE_ADJUSTMENT, gtk::NONE_ADJUSTMENT);
+
+        let html = fs::read_to_string("./html/test.html").unwrap().replace("\r\n", "").to_string();
+        let mut html = Html{
+            html:html,
+            tag:Vec::new(),
+        };
+
+        let mut node = parse_node(&mut html);
+
+        add_box::html_judg(&mut scr_view, &mut node);
+
+        win.add(&scr_view);
+        win.show_all();
+    });
+    uiapp.run(&env::args().collect::<Vec<_>>());
 }
