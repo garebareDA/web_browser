@@ -30,9 +30,9 @@ fn main() {
             tag:Vec::new(),
         };
 
-        let mut node = parse_node(&mut html);
+        let node = parse_node(&mut html);
 
-        add_box::html_judg(&mut scr_view, &mut node);
+        add_box::html_judg(&mut scr_view, &node);
 
         win.add(&scr_view);
         win.show_all();
