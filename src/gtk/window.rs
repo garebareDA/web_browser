@@ -3,6 +3,7 @@ extern crate gio;
 
 use gtk::prelude::*;
 use gio::prelude::*;
+use gtk::{Button, Label, Window, WindowType};
 
 use std::env;
 
@@ -11,14 +12,10 @@ pub fn window() {
                                       gio::ApplicationFlags::FLAGS_NONE)
                                  .expect("Application::new failed");
     uiapp.connect_activate(|app| {
-        // We create the main window.
         let win = gtk::ApplicationWindow::new(app);
 
-        // Then we set its size and a title.
         win.set_default_size(320, 200);
-        win.set_title("Basic example");
-
-        // Don't forget to make all widgets visible.
+        win.set_title("web blowser");
         win.show_all();
     });
     uiapp.run(&env::args().collect::<Vec<_>>());
