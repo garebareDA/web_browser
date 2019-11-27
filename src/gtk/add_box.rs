@@ -1,29 +1,18 @@
-extern crate gtk;
+use crate :: html_parser :: structs::Nodes;
 
-use super::super::html_parser::structs::Nodes;
-use super::tag_judg;
-use gtk::prelude::*;
-
-pub fn html_judg(view:&mut gtk::ScrolledWindow, nodes: &Nodes) {
-    let mut vbox = gtk::Box::new(gtk::Orientation::Vertical, 0);
+pub fn html_judg(nodes: &Nodes) {
     if !nodes.child.is_empty() {
-        node_serch(&mut vbox, &nodes.child);
+        node_serch(&nodes.child);
     }
-    view.add(&vbox);
 }
 
-fn node_serch(vbox: &mut gtk::Box, child: &Vec<Nodes>) {
-    let mut vbox_child = gtk::Box::new(gtk::Orientation::Vertical, 0);
+fn node_serch(child: &Vec<Nodes>) {
     for index in 0..child.len() {
         let tag_name = child[index].tag_name.clone();
         let text = child[index].text.clone();
 
-        tag_judg::tags(vbox, &child[index]);
-        println!("tag:{} text:{}", tag_name, text);
-
         if !child[index].child.is_empty() {
-            node_serch(&mut vbox_child, &child[index].child);
+            node_serch(&child[index].child);
         }
-        vbox.add(&vbox_child);
     }
 }
