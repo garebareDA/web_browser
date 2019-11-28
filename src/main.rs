@@ -1,10 +1,9 @@
 #[macro_use]
 extern crate conrod;
 
-
 use conrod::{widget, color, Colorable, Borderable, Sizeable, Positionable, Labelable, Widget};
 use conrod::backend::glium::glium;
-use conrod::backend::glium::glium::Surface;
+use conrod::glium::glutin::Event;
 
 use web_browser::html_parser::structs::Html;
 use web_browser::html_parser::parses::parse_node;
@@ -24,17 +23,18 @@ fn main() {
         .with_multisampling(4);
 
     let display = glium::Display::new(window, context, &event_loop).unwrap();
+    let mut events:Vec<glium::glutin::Event> = Vec::new();
 
-    let mut events = Vec::new();
     'render: loop {
         events.clear();
         event_loop.poll_events(|event| { events.push(event);});
 
-        if events.is_empty() {
-            event_loop.run_forever(|event| {
-                events.push(event);
-                glium::glutin::ControlFlow::Break
-            })
+        if !events.is_empty() {
+            println!("{:?}", events);
+            match events[0]{
+                Event::WindowEvent{event: glium::glutin::WindowEvent::CloseRequested, ..} => break 'render,
+                _ => {}
+            }
         }
     }
 
