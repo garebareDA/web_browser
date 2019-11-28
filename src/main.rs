@@ -24,6 +24,15 @@ fn main() {
 
     let display = glium::Display::new(window, context, &event_loop).unwrap();
     let mut events:Vec<glium::glutin::Event> = Vec::new();
+    let mut renderer = conrod::backend::glium::Renderer::new(&display).unwrap();
+
+    let html = fs::read_to_string("./html/test.html").unwrap().replace("\r\n", "").to_string();
+    let mut html = Html{
+        html:html,
+        tag:Vec::new(),
+    };
+
+    let node = parse_node(&mut html);
 
     'render: loop {
         events.clear();
@@ -38,11 +47,5 @@ fn main() {
         }
     }
 
-    let html = fs::read_to_string("./html/test.html").unwrap().replace("\r\n", "").to_string();
-    let mut html = Html{
-        html:html,
-        tag:Vec::new(),
-    };
 
-    let node = parse_node(&mut html);
 }
