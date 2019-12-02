@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate conrod;
+extern crate find_folder;
 
 use conrod::{widget, color, Colorable, Borderable, Sizeable, Positionable, Labelable, Widget};
 use conrod::backend::glium::glium;
@@ -23,8 +24,8 @@ widget_ids!(
 
 fn main() {
 
-    let width = 400;
-    let height = 200;
+    let width = 1080;
+    let height = 720;
 
     let mut event_loop = glium::glutin::EventsLoop::new();
     let window = glium::glutin::WindowBuilder::new()
@@ -36,6 +37,12 @@ fn main() {
         .with_multisampling(4);
 
     let mut ui = conrod::UiBuilder::new([width as f64, height as f64]).build();
+    let assets = find_folder::Search::KidsThenParents(3, 5)
+    .for_folder("assets")
+    .unwrap();
+    let font_path = assets.join("MSGOTHIC.TTF");
+    ui.fonts.insert_from_file(font_path).unwrap();
+
     let ids = &mut Ids::new(ui.widget_id_generator());
     let image_map = conrod::image::Map::<glium::texture::Texture2d>::new();
     let display = glium::Display::new(window, context, &event_loop).unwrap();
@@ -49,6 +56,17 @@ fn main() {
     };
 
     let node = parse_node(&mut html);
+
+    widget::Canvas::new()
+    .pad(0.0)
+    .color(conrod::color::WHITE)
+    .set(ids.canvas, &mut ui.set_widgets());
+
+    widget::Text::new("sonic")
+    .middle_of(ids.canvas)
+    .font_size(140)
+    .color(color::BLACK)
+    .set(ids.num_lbl, &mut ui.set_widgets());
 
     'render: loop {
         events.clear();
