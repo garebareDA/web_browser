@@ -176,6 +176,11 @@ version = "1.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "find_folder"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
 name = "fixedbitset"
 version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -908,6 +913,7 @@ name = "web_browser"
 version = "0.1.0"
 dependencies = [
  "conrod 0.61.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "find_folder 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -998,6 +1004,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum daggy 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = "9293a0da7d1bc1f30090ece4d9f9de79a07be7302ddb00e5eb1fefb6ee6409e2"
 "checksum dlib 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "77e51249a9d823a4cb79e3eca6dcd756153e8ed0157b6c04775d04bf1b13b76a"
 "checksum downcast-rs 1.1.1 (registry+https://github.com/rust-lang/crates.io-index)" = "52ba6eb47c2131e784a38b726eb54c1e1484904f013e576a25354d0124161af6"
+"checksum find_folder 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "9f6d018fb95a0b59f854aed68ecd96ce2b80af7911b92b1fed3c4b1fa516b91b"
 "checksum fixedbitset 0.1.9 (registry+https://github.com/rust-lang/crates.io-index)" = "86d4de0081402f5e88cdac65c8dcdcc73118c1a7a465e2a05f0da05843a8ea33"
 "checksum fnv 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)" = "2fad85553e09a6f881f739c29f0b00b0f01357c743266d478b68951ce23285f3"
 "checksum foreign-types 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)" = "f6f339eb8adc052cd2ca78910fda869aefa38d22d5cb648e6485e4d3fc06f3b1"
