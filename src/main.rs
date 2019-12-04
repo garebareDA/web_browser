@@ -17,6 +17,8 @@ widget_ids!(
         canvas,
         num_lbl,
         button,
+        a,
+        b,
     }
 );
 
@@ -89,5 +91,13 @@ fn set_ui(ref mut ui: conrod::UiCell, ids: &Ids) {
         .middle_of(ids.canvas)
         .font_size(20)
         .color(color::BLACK)
+        .x(-500.0)
         .set(ids.num_lbl, ui);
+
+        widget::Text::new("mario")
+        .middle_of(ids.num_lbl)
+        .mid_top_with_margin_on(ids.num_lbl, 20.0)
+        .font_size(20)
+        .color(color::BLACK)
+        .set(ids.a, ui);
 }
