@@ -12,13 +12,13 @@ use web_browser::html_parser::parses::parse_node;
 use web_browser::conrod::add_box;
 use std::fs;
 
-use std::env;
-
 widget_ids!(
     struct Ids {
         canvas,
         num_lbl,
         button,
+        a,
+        b,
     }
 );
 
@@ -57,28 +57,18 @@ fn main() {
 
     let node = parse_node(&mut html);
 
-    widget::Canvas::new()
-    .pad(0.0)
-    .color(conrod::color::WHITE)
-    .set(ids.canvas, &mut ui.set_widgets());
-
-    widget::Text::new("sonic")
-    .middle_of(ids.canvas)
-    .font_size(140)
-    .color(color::BLACK)
-    .set(ids.num_lbl, &mut ui.set_widgets());
-
     'render: loop {
         events.clear();
         event_loop.poll_events(|event| { events.push(event);});
 
         if !events.is_empty() {
-            println!("{:?}", events);
             match events[0]{
                 Event::WindowEvent{event: glium::glutin::WindowEvent::CloseRequested, ..} => break 'render,
                 _ => {}
             }
         }
+
+        set_ui(ui.set_widgets(), &ids);
 
         if let Some(primitives) = ui.draw_if_changed() {
             renderer.fill(&display, primitives, &image_map);
@@ -89,4 +79,25 @@ fn main() {
          }
 
     }
+}
+
+fn set_ui(ref mut ui: conrod::UiCell, ids: &Ids) {
+        widget::Canvas::new()
+        .pad(0.0)
+        .color(conrod::color::WHITE)
+        .set(ids.canvas, ui);
+
+        widget::Text::new("sonic")
+        .middle_of(ids.canvas)
+        .font_size(20)
+        .color(color::BLACK)
+        .xy([-500.0, 350.0])
+        .set(ids.num_lbl, ui);
+
+        widget::Text::new("mario")
+        .middle_of(ids.num_lbl)
+        .mid_top_with_margin_on(ids.num_lbl, 20.0)
+        .font_size(20)
+        .color(color::BLACK)
+        .set(ids.a, ui);
 }
