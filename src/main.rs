@@ -91,7 +91,7 @@ fn set_ui(ref mut ui: conrod::UiCell, ids: &Ids) {
         .middle_of(ids.canvas)
         .font_size(20)
         .color(color::BLACK)
-        .x(-500.0)
+        .xy([-500.0, 350.0])
         .set(ids.num_lbl, ui);
 
         widget::Text::new("mario")
