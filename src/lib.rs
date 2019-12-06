@@ -1,2 +1,2 @@
 pub mod html_parser;
-pub mod conrod;
+pub mod ui;
