@@ -1,8 +1,7 @@
 extern crate gtk;
 
 use gtk::prelude::*;
-use gtk::{Button, Label, Window, WindowType};
-use gtk::{LabelBuilder, Justification, TextTagBuilder};
+use gtk::{Window, WindowType};
 
 use std::fs;
 use web_browser::html_parser::parses::parse_node;
@@ -30,22 +29,17 @@ fn main() {
         tag: Vec::new(),
     };
 
-    let node = parse_node(&mut html);
-
     let window = Window::new(WindowType::Toplevel);
+    let scr_win = gtk::ScrolledWindow::new(gtk::NONE_ADJUSTMENT, gtk::NONE_ADJUSTMENT);
     window.set_title("web_blowser");
     window.set_default_size(width, height);
+    let mut vbox = gtk::Box::new(gtk::Orientation::Vertical, 2);
 
-    //labelのtextサイズがmarkupで size
+    let node = parse_node(&mut html);
+    add::node_serch(&node.child, &mut vbox);
 
-    let buffer = gtk::Label::new(Some("mario"));
-    buffer.set_markup("<span size='100000'>big text</span>");
-
-    let vbox = gtk::Box::new(gtk::Orientation::Vertical, 2);
-
-    vbox.add(&buffer);
-    window.add(&vbox);
-
+    scr_win.add(&vbox);
+    window.add(&scr_win);
     window.show_all();
 
     window.connect_delete_event(|_, _| {
