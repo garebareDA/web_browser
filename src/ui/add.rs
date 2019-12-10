@@ -96,10 +96,12 @@ fn image(attr: &std::vec::Vec<Attribute>) -> gtk::Image {
 
                 let image = Image::new_from_file(path);
                 image.set_halign(gtk::Align::Start);
+                image.set_margin_start(10);
                 return image;
             }else if split_url[0] == "."{
                 let image = Image::new_from_file(url);
                 image.set_halign(gtk::Align::Start);
+                image.set_margin_start(10);
                 return image;
             }
         }
