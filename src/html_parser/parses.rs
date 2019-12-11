@@ -43,12 +43,27 @@ pub fn parse_node(mut html: &mut Html) -> Nodes {
             }
         }
 
+        loop{
+            if html.html.len() == 0 {
+                break;
+            }
+
+            if html.tag.last().unwrap() == &nodes.tag_name {
+                let node = parse_node(&mut html);
+                nodes.child.push(node);
+            }else{
+                break;
+            }
+        }
+
+        println!("{:?} {}", html.tag, nodes.tag_name);
+
         loop {
             if html.html.len() == 0 {
                 break;
             }
 
-            if nodes.tag_name == "html" {
+            if nodes.tag_name == "body" {
                 let node = parse_node(&mut html);
                 nodes.child.push(node);
             } else {
