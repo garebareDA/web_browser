@@ -7,7 +7,6 @@ use std::fs;
 use web_browser::html_parser::parses::parse_node;
 use web_browser::html_parser::structs::Html;
 use web_browser::ui::add;
-
 fn main() {
 
     if gtk::init().is_err() {
@@ -36,7 +35,8 @@ fn main() {
     let mut vbox = gtk::Box::new(gtk::Orientation::Vertical, 2);
 
     let node = parse_node(&mut html);
-    add::node_serch(&node.child, &mut vbox);
+    println!("{:?}", node);
+    add::node_serch(&node.child, &mut vbox, &mut Vec::new());
 
     scr_win.add(&vbox);
     window.add(&scr_win);

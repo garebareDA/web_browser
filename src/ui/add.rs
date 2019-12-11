@@ -2,109 +2,68 @@ extern crate gtk;
 extern crate ureq;
 
 use gtk::prelude::*;
-use gtk::{Button, Label, Window, WidgetExt, Image};
+use gtk::{Button, Label, Window, WidgetExt};
 use gtk::Justification;
 use std::io::{Read, Write};
 use std::fs::File;
 
 use crate::html_parser::structs::{Nodes, Attribute};
+use super::image_tag::image;
+use super::text_tag::{label_h, hr};
 
-pub fn node_serch(child: &Vec<Nodes>, vbox:&mut gtk::Box) {
+pub fn node_serch(child: &Vec<Nodes>, vbox:&mut gtk::Box, inner: &mut Vec<String>) {
     for index in 0..child.len() {
         let tag_name = child[index].tag_name.clone();
         let text = child[index].text.clone();
         let attr = &child[index].attributes;
+        let mut vboxs = gtk::Box::new(gtk::Orientation::Vertical, 2);
 
-        if tag_name == "head" {
+        if &tag_name == "head" {
             continue;
         }
 
-        let mut vboxs = gtk::Box::new(gtk::Orientation::Vertical, 2);
-        tag_judgment(&tag_name, &text, &mut vboxs, attr);
+        if &tag_name != "html"{
+            inner.push(tag_name.clone());
+        }
+
+        tag_judgment(&text, &mut vboxs, attr, inner);
 
         if !child[index].child.is_empty() {
-            node_serch(&child[index].child, &mut vboxs);
+            node_serch(&child[index].child, &mut vboxs, inner);
+        }
+
+        if !inner.is_empty(){
+            inner.remove(inner.len() - 1);
         }
 
         vbox.add(&vboxs);
     }
 }
 
-fn tag_judgment(tag:&str, text:&str, vbox:&mut gtk::Box, attr: &std::vec::Vec<Attribute>) {
-    match tag{
-        "h1" =>  vbox.pack_start(&label_h( 30000, "b", text), false, false, 5),
-        "h2" =>  vbox.pack_start(&label_h( 25000, "b", text), false, false, 5),
-        "h3" =>  vbox.pack_start(&label_h( 23000, "b", text), false, false, 5),
-        "h4" =>  vbox.pack_start(&label_h( 20000, "b", text), false, false, 5),
-        "h5" =>  vbox.pack_start(&label_h( 15000, "b", text), false, false, 10),
-        "h6" =>  vbox.pack_start(&label_h( 10000, "b", text), false, false, 10),
-        "p" => vbox.pack_start(&label_h( 15000, "span", text), false, false, 5),
-        "img" => vbox.pack_start(&image(attr), false, false, 10),
-        _ => {}
-    }
-}
+fn tag_judgment(text:&str, vbox:&mut gtk::Box, attr: &std::vec::Vec<Attribute>, inner: &mut Vec<String>) {
+    let mut font_size = 15000;
+    let mut markup = "span";
+    let mut pad = 5;
 
-fn label_h(size:u32, use_tag:&str, text:&str) -> gtk::Label {
-    let label = gtk::Label::new(None);
-    let markup = format!("<{}><span size='{}'>{}</span></{}>",use_tag, size, text, use_tag);
-    label.set_justify(Justification::Left);
-    label.set_halign(gtk::Align::Start);
-    label.set_markup(&markup);
-    label.set_margin_start(10);
-
-    return label;
-}
-
-fn image(attr: &std::vec::Vec<Attribute>) -> gtk::Image {
-    let image = Image::new();
-    for index in 0..attr.len() {
-        let name =  attr[index].name.clone();
-
-        if &name == "src"{
-            let url = &attr[index].contents;
-            let split_url = url.split("/");
-            let split_url: Vec<&str> = split_url.collect();
-
-            if split_url[0] == "http:" || split_url[0] == "https:" {
-                let resp = ureq::get(url).call();
-                let mut buf = {
-                     let len = resp.header("Content-Length").unwrap()
-                        .parse::<usize>().unwrap();
-                    vec![ 0; len ]
-                };
-                let mut resp = resp.into_reader();
-
-                let mut file_name = split_url[split_url.len() - 1].to_string();
-
-                let file_split = file_name.split(".");
-                let file_split:Vec<&str> = file_split.collect();
-                let n = file_split[file_split.len() - 1];
-
-                match n {
-                    "png" => {},
-                    "gif" => {},
-                    "webm" => {},
-                    "jpg" => {},
-                    _ => file_name = n.to_string() + ".png"
-                }
-
-                let path = format!("img/{}", file_name);
-                let mut image_file = File::create(&path).unwrap();
-
-                resp.read_exact(&mut buf);
-                image_file.write_all(&mut buf);
-
-                let image = Image::new_from_file(path);
-                image.set_halign(gtk::Align::Start);
-                image.set_margin_start(10);
-                return image;
-            }else if split_url[0] == "."{
-                let image = Image::new_from_file(url);
-                image.set_halign(gtk::Align::Start);
-                image.set_margin_start(10);
-                return image;
-            }
+    for index in 0..inner.len(){
+        let tag : &str = &inner[index];
+        match tag {
+            "h1" =>  {font_size = 30000; markup = "b"; pad = 5;}
+            "h2" =>  {font_size = 25000; markup = "b"; pad = 5;}
+            "h3" =>  {font_size = 23000; markup = "b"; pad = 5;}
+            "h4" =>  {font_size = 20000; markup = "b"; pad = 5;}
+            "h5" =>  {font_size = 15000; markup = "b"; pad = 10;}
+            "h6" =>  {font_size = 10000; markup = "b"; pad = 10;}
+            "p" =>  {font_size = 15000; markup = "span"; pad = 5;}
+            "hr" => vbox.pack_start(&hr(), false, false, 15),
+            "img" => vbox.pack_start(&image(attr), false, false, 10),
+            _ => {}
         }
     }
-    image
+
+    let text = text.trim();
+    if text != ""{
+        println!("{}",text);
+        vbox.pack_start(&label_h(font_size, markup, text), false, false, pad);
+    }
 }
