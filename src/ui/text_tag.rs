@@ -2,8 +2,10 @@ extern crate gtk;
 extern crate gdk;
 
 use gtk::prelude::*;
-use gtk::{Label, WidgetExt};
+use gtk::{Label, WidgetExt, TextView, ScrolledWindow};
 use gtk::Justification;
+
+use crate::html_parser::structs::Attribute;
 
 pub fn label_h(size:u32, use_tag:&str, text:&str) -> gtk::Label {
     let label = Label::new(None);
@@ -24,4 +26,30 @@ pub fn hr() -> gtk::Box {
     vbox.set_margin_start(10);
     vbox.set_opacity(0.5);
     return vbox
+}
+
+pub fn textarea(attr: &std::vec::Vec<Attribute>) -> ScrolledWindow {
+    let scroll = ScrolledWindow::new(gtk::NONE_ADJUSTMENT, gtk::NONE_ADJUSTMENT);
+    let text_view = TextView::new();
+
+    let mut col = 20;
+    let mut row = 10;
+
+    for index in 0..attr.len() {
+        let name =  attr[index].name.clone();
+
+        if name == "cols" {
+            col = attr[index].contents.parse().unwrap();
+        }
+
+        if name == "rows" {
+            row =  attr[index].contents.clone().parse().unwrap();
+        }
+    }
+    scroll.set_size_request(0, row * 15);
+    scroll.set_margin_end(col * 33);
+    scroll.set_margin_start(5);
+    scroll.add(&text_view);
+
+    scroll
 }

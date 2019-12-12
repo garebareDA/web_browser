@@ -56,8 +56,6 @@ pub fn parse_node(mut html: &mut Html) -> Nodes {
             }
         }
 
-        println!("{:?} {}", html.tag, nodes.tag_name);
-
         loop {
             if html.html.len() == 0 {
                 break;
@@ -181,7 +179,6 @@ fn parse_attribute(html: &mut Html) -> Vec<Attribute> {
             attr.contents = contents.trim().to_string();
         }
 
-        println!("{:?}", attr);
         attr_vec.push(attr);
     }
 

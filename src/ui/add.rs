@@ -4,7 +4,7 @@ use gtk::prelude::*;
 
 use super::image_tag::image;
 use super::list_tag::li_tag;
-use super::text_tag::{hr, label_h};
+use super::text_tag::{hr, label_h, textarea};
 use crate::html_parser::structs::{Attribute, Nodes};
 
 pub fn node_serch(child: &Vec<Nodes>, vbox: &mut gtk::Box, inner: &mut Vec<String>) {
@@ -124,13 +124,13 @@ fn tag_judgment(
                 false,
                 0,
             ),
+            "textarea" => vbox.pack_start(&textarea(&attr), false, false, 5),
             _ => {}
         }
     }
 
     if text != "" {
         if inner.last().unwrap() != "li" {
-            println!("{}", text);
             vbox.pack_start(&label_h(font_size, markup, &text), false, false, pad);
         }
     }
