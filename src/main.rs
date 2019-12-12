@@ -3,7 +3,6 @@ extern crate ureq;
 
 use gtk::prelude::*;
 use gtk::{Window, WindowType};
-use std::io::Read;
 use std::fs;
 use std::env;
 
