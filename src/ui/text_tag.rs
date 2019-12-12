@@ -2,7 +2,7 @@ extern crate gtk;
 extern crate gdk;
 
 use gtk::prelude::*;
-use gtk::{Box, Label, WidgetExt, TextView, ScrolledWindow, ScrolledWindowExt};
+use gtk::{Label, WidgetExt, TextView, ScrolledWindow};
 use gtk::Justification;
 
 use crate::html_parser::structs::Attribute;
@@ -31,7 +31,6 @@ pub fn hr() -> gtk::Box {
 pub fn textarea(attr: &std::vec::Vec<Attribute>) -> ScrolledWindow {
     let scroll = ScrolledWindow::new(gtk::NONE_ADJUSTMENT, gtk::NONE_ADJUSTMENT);
     let text_view = TextView::new();
-    let boxs = Box::new(gtk::Orientation::Vertical, 2);
 
     let mut col = 20;
     let mut row = 10;

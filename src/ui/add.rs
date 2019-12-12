@@ -131,7 +131,6 @@ fn tag_judgment(
 
     if text != "" {
         if inner.last().unwrap() != "li" {
-            println!("{}", text);
             vbox.pack_start(&label_h(font_size, markup, &text), false, false, pad);
         }
     }
