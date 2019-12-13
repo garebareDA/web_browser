@@ -20,7 +20,7 @@ pub fn image(attr: &std::vec::Vec<Attribute>) -> gtk::Image {
             if split_url[0] == "http:" || split_url[0] == "https:" {
                 let resp = ureq::get(url).call();
                 let mut buf = {
-                     let len = resp.header("Content-Length").unwrap()
+                    let len = resp.header("Content-Length").unwrap()
                         .parse::<usize>().unwrap();
                     vec![ 0; len ]
                 };

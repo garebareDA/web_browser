@@ -2,10 +2,12 @@ extern crate gtk;
 extern crate gdk;
 
 use gtk::prelude::*;
-use gtk::{Label, WidgetExt, TextView, ScrolledWindow};
+use gtk::{Label, WidgetExt, TextView, ScrolledWindow, LinkButton};
 use gtk::Justification;
 
 use crate::html_parser::structs::Attribute;
+use super::add;
+use crate::html_parser::structs::Html;
 
 pub fn label_h(size:u32, use_tag:&str, text:&str) -> gtk::Label {
     let label = Label::new(None);
@@ -15,7 +17,7 @@ pub fn label_h(size:u32, use_tag:&str, text:&str) -> gtk::Label {
     label.set_markup(&markup);
     label.set_margin_start(10);
 
-    return label;
+    label
 }
 
 pub fn hr() -> gtk::Box {
@@ -52,4 +54,26 @@ pub fn textarea(attr: &std::vec::Vec<Attribute>) -> ScrolledWindow {
     scroll.add(&text_view);
 
     scroll
+}
+
+pub fn a_tag(attr:&Vec<Attribute>, text: &str) -> gtk::Box {
+    let mut href = String::new();
+    for index in 0..attr.len() {
+        let name =  attr[index].name.clone();
+
+        if name == "href" {
+            href = attr[index].contents.parse().unwrap();
+        }
+    }
+
+    let button = LinkButton::new("");
+    let hbox = gtk::Box::new(gtk::Orientation::Horizontal, 0);
+    button.set_label(text);
+    button.override_background_color(gtk::StateFlags::NORMAL, Some(&gdk::RGBA::white()));
+    hbox.add(&button);
+
+    button.connect_clicked(|_| {
+    });
+
+    hbox
 }
